@@ -1,0 +1,157 @@
+
+//+------------------------------------------------------------------+
+//|                                           DrawDown Limiter MT4   |
+//|                                    https://www.forexroboteasy.com|
+//|                                                        Forex Robot Easy Team |
+//+------------------------------------------------------------------+
+#property strict
+
+// Account Drawdown Tracking
+void AccountDrawdownTracking()
+{
+   double maxBalance = AccountBalance();
+   double currentBalance = maxBalance;
+   double drawdown = 0.0;
+   
+   while(true)
+   {
+      if(currentBalance > maxBalance)
+      {
+         maxBalance = currentBalance;
+      }
+      
+      drawdown = 100.0 * (maxBalance - currentBalance) / maxBalance;
+      
+      if(drawdown > DrawdownLimit)
+      {
+         CloseAllTrades();
+         break;
+      }
+      
+      Sleep(1000); // Check account balance every second
+      currentBalance = AccountBalance();
+   }
+}
+
+// Daily Trader Drawdown Tracking
+void DailyTraderDrawdownTracking()
+{
+   double maxEquity = AccountEquity();
+   double currentEquity = maxEquity;
+   double drawdown = 0.0;
+   
+   while(true)
+   {
+      if(currentEquity > maxEquity)
+      {
+         maxEquity = currentEquity;
+      }
+      
+      drawdown = 100.0 * (maxEquity - currentEquity) / maxEquity;
+      
+      if(drawdown > DrawdownLimit)
+      {
+         CloseAllTrades();
+         break;
+      }
+      
+      Sleep(1000); // Check equity every second
+      currentEquity = AccountEquity();
+   }
+}
+
+// Overtrading Prevention
+void OvertradingPrevention(int maxTrades, int timePeriod)
+{
+   int tradeCount = 0;
+   datetime lastTradeTime = 0;
+   
+   while(true)
+   {
+      if(tradeCount >= maxTrades)
+      {
+         datetime currentTime = TimeCurrent();
+         if(currentTime - lastTradeTime < timePeriod * 3600) // Check time period in seconds
+         {
+            Sleep(1000); // Wait for the next second
+            continue;
+         }
+         else
+         {
+            tradeCount = 0; // Reset trade count
+         }
+      }
+      
+      // Place your trading logic here
+      
+      tradeCount++;
+      lastTradeTime = TimeCurrent();
+      
+      Sleep(1000); // Wait for the next second
+   }
+}
+
+// Drawdown Limitation
+void DrawdownLimitation(double drawdownLimit)
+{
+   double maxEquity = AccountEquity();
+   double currentEquity = maxEquity;
+   double drawdown = 0.0;
+   
+   while(true)
+   {
+      if(currentEquity > maxEquity)
+      {
+         maxEquity = currentEquity;
+      }
+      
+      drawdown = 100.0 * (maxEquity - currentEquity) / maxEquity;
+      
+      if(drawdown > drawdownLimit)
+      {
+         CloseAllTrades();
+         break;
+      }
+      
+      Sleep(1000); // Check equity every second
+      currentEquity = AccountEquity();
+   }
+}
+
+// Protection of Trading Account Balance
+void ProtectAccountBalance(double balanceProtection)
+{
+   double maxEquity = AccountEquity();
+   double currentEquity = maxEquity;
+   double drawdown = 0.0;
+   
+   while(true)
+   {
+      if(currentEquity > maxEquity)
+      {
+         maxEquity = currentEquity;
+      }
+      
+      drawdown = 100.0 * (maxEquity - currentEquity) / maxEquity;
+      
+      if(drawdown > balanceProtection)
+      {
+         CloseAllTrades();
+         break;
+      }
+      
+      Sleep(1000); // Check equity every second
+      currentEquity = AccountEquity();
+   }
+}
+
+// Main program
+void OnStart()
+{
+   AccountDrawdownTracking();
+   DailyTraderDrawdownTracking();
+   OvertradingPrevention(10, 24); // Maximum 10 trades per day
+   DrawdownLimitation(10.0); // Maximum 10% drawdown
+   ProtectAccountBalance(50.0); // Protect balance at 50% drawdown
+}
+
